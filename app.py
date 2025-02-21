@@ -3,7 +3,9 @@ import os
 from flask import Flask, request, jsonify
 import uuid
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path='', 
+            static_folder='static')
 
 @app.route("/gerarimagem", methods=["POST"] )
 def gerarimagem():
