@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON to Image</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-lg">
+        <h1 class="text-2xl font-bold mb-4">JSON to Image</h1>
+        <form id="jsonForm" >
+            <div class="mb-4">
+                <label for="jsonInput" class="block text-gray-700 text-sm font-bold mb-2">JSON Input:</label>
+                <textarea id="jsonInput" name="jsonInput" rows="10" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="imageOutput" class="block text-gray-700 text-sm font-bold mb-2">Image Output:</label>
+                <div id="imageOutput" class="border rounded w-full h-64 flex items-center justify-center bg-gray-200">
+                    <!-- Image will be displayed here -->
+                </div>
+            </div>
+            <div class="flex items-center justify-between">
+                <button id="submitButton" type="button" class="bg-blue-400 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" disabled>Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const jsonInput = document.getElementById('jsonInput');
+        const submitButton = document.getElementById('submitButton');
+        const imageOutput = document.getElementById('imageOutput');
+
+        jsonInput.addEventListener('input', () => {
+            submitButton.disabled = jsonInput.value.trim() === '';
+            if (submitButton.disabled) {
+                submitButton.classList.add('bg-blue-400');
+                submitButton.classList.remove('bg-blue-500');
+                submitButton.classList.remove('hover:bg-blue-700');
+            } else {
+                submitButton.classList.remove('bg-blue-400');
+                submitButton.classList.add('hover:bg-blue-700');
+                submitButton.classList.add('bg-blue-500');
+            }
+        });
+
+        submitButton.addEventListener('click', async () => {
+            const response = await fetch('/gerarimagem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonInput.value)
+            });
+
+            const data = await response.body.getReader().read().then(({ value }) => new TextDecoder().decode(value));
+            imageOutput.innerHTML = `<img src="data:image/png;base64,${data}" alt="Generated Image" />`;
+        });
+    </script>
+</body>
+</html></div></html>
